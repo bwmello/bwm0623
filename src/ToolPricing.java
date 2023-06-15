@@ -1,7 +1,6 @@
 import java.math.BigDecimal;
 
 public class ToolPricing {
-
     ToolType toolType;
     BigDecimal dailyCharge;
     boolean isWeekdayCharged;

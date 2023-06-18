@@ -21,9 +21,9 @@ public class Store {
 
     public RentalAgreement Checkout(ToolCode toolCode, String checkoutDateString, int rentalDaysCount, int discountPercentInt) {
         Tool tool = toolsMap.get(toolCode);
-        ToolPricing toolPricing = toolsPricingMap.get(tool.brand);
+        ToolPricing toolPricing = toolsPricingMap.get(tool.toolType);
 
-        LocalDate checkoutDate = LocalDate.parse(checkoutDateString, DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT));
+        LocalDate checkoutDate = LocalDate.parse(checkoutDateString, DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT));
         LocalDate dueDate = checkoutDate.plusDays(rentalDaysCount);
         int chargeDaysCount = rentalDaysCount;
         // TODO exclude no charge days from chargeDaysCount

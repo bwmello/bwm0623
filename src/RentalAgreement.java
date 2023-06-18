@@ -33,7 +33,7 @@ public class RentalAgreement {
     public void Print() {
         NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();  // $9,999.99
         NumberFormat percentFormat = NumberFormat.getPercentInstance();  // 99%
-        DateTimeFormatter dateFormat = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT);  // mm/dd/yy
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT);  // mm/dd/yy
 
         // Below String arg compiles down to StringBuilder
         System.out.println(

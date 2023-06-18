@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 class StoreTest {
-    Store store = new Store();
+    private final Store store = new Store();
 
     @Test
     @DisplayName("Checkout parses arg checkoutDateString of format mm/dd/yy to LocalDate")

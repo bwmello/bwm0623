@@ -20,6 +20,13 @@ public class Store {
     }
 
     public RentalAgreement Checkout(ToolCode toolCode, String checkoutDateString, int rentalDaysCount, int discountPercentInt) {
+        if (rentalDaysCount < 1 || rentalDaysCount > 365) {
+            throw new IllegalArgumentException("Rental days count must be between 1 and 365");
+        }
+        if (discountPercentInt < 0 || discountPercentInt > 100) {
+            throw new IllegalArgumentException("Discount percent must be between 0 and 100");
+        }
+
         Tool tool = toolsMap.get(toolCode);
         ToolPricing toolPricing = toolsPricingMap.get(tool.toolType);
 

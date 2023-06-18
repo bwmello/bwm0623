@@ -1,5 +1,6 @@
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
@@ -8,6 +9,35 @@ import java.time.LocalDate;
 class StoreTest {
     private final Store store = new Store();
 
+    /** Arg bounds tests */
+    @Test
+    @DisplayName("Checkout throws exception if arg rentalDaysCount isn't between 1 and 365")
+    void testCheckoutRentalDaysCountBounds() {
+        ToolCode toolCode = ToolCode.LADW;
+        assertThrows(IllegalArgumentException.class, () -> {
+            store.Checkout(toolCode, "2/1/23", -1, 0);
+        });
+        assertThrows(IllegalArgumentException.class, () -> {
+            store.Checkout(toolCode, "2/1/23", 0, 0);
+        });
+        assertThrows(IllegalArgumentException.class, () -> {
+            store.Checkout(toolCode, "2/1/23", 366, 0);
+        });
+    }
+
+    @Test
+    @DisplayName("Checkout throws exception if arg discountPercentInt isn't between 0 and 100")
+    void testCheckoutDiscountPercentIntBounds() {
+        ToolCode toolCode = ToolCode.LADW;
+        assertThrows(IllegalArgumentException.class, () -> {
+            store.Checkout(toolCode, "2/1/23", 7, -1);
+        });
+        assertThrows(IllegalArgumentException.class, () -> {
+            store.Checkout(toolCode, "2/1/23", 7, 101);
+        });
+    }
+
+    /** Arg parsing tests */
     @Test
     @DisplayName("Checkout parses arg checkoutDateString of format mm/dd/yy to LocalDate")
     void testCheckoutDateStringParsing() {
@@ -28,6 +58,7 @@ class StoreTest {
         assertEquals(new BigDecimal(".49"), rentAgreement.discountPercent);
     }
 
+    /** Baseline calculation tests */
     @Test
     @DisplayName("Checkout charging all rental days with no discount")
     void testCheckoutAllChargeDaysNoDiscount() {
@@ -54,4 +85,7 @@ class StoreTest {
         assertEquals(new BigDecimal("6.97"), rentAgreement.discountAmount);
         assertEquals(new BigDecimal("6.96"), rentAgreement.finalCharge);
     }
+
+    /** Required calculation tests */
+    // TODO
 }

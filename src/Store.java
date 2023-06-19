@@ -2,6 +2,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.time.temporal.ChronoField;
 import java.util.HashMap;
 
 public class Store {
@@ -32,10 +33,45 @@ public class Store {
 
         LocalDate checkoutDate = LocalDate.parse(checkoutDateString, DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT));
         LocalDate dueDate = checkoutDate.plusDays(rentalDaysCount);
-        int chargeDaysCount = rentalDaysCount;
-        // TODO exclude no charge days from chargeDaysCount
+        int chargeDaysCount = GetChargeDaysCount(toolPricing, rentalDaysCount, checkoutDate, dueDate);
 
         BigDecimal discountPercent = BigDecimal.valueOf(discountPercentInt).divide(new BigDecimal("100"));
         return new RentalAgreement(tool, rentalDaysCount, checkoutDate, dueDate, toolPricing.dailyCharge, chargeDaysCount, discountPercent);
+    }
+
+    public int GetChargeDaysCount(ToolPricing toolPricing, int rentalDaysCount, LocalDate checkoutDate, LocalDate dueDate) {
+        int chargeDaysCount = 0;  // From day after checkoutDate through and including dueDate
+
+        // Linear solution, too slow as rentalDaysCount approaches max limit:
+        // checkoutDate.plusDays(1).datesUntil(dueDate.plusDays(1)).forEach(date -> {});
+
+        // Add any valid weekdays or weekends
+        if (toolPricing.isWeekdayCharged != toolPricing.isWeekendCharged) {
+            int startingDay = checkoutDate.plusDays(1).get(ChronoField.DAY_OF_WEEK);  // 6 == Saturday, 7 == Sunday
+            int endingDay = dueDate.get(ChronoField.DAY_OF_WEEK);
+            int repeatedWeeks = rentalDaysCount / 7;
+            int weekendDaysCount = 2 * repeatedWeeks;
+            if (startingDay != endingDay) {
+                // TODO
+            }
+            int weekDaysCount = rentalDaysCount - weekendDaysCount;
+            if (toolPricing.isWeekdayCharged) {
+                chargeDaysCount += weekDaysCount;
+            }
+            if (toolPricing.isWeekendCharged) {
+                chargeDaysCount += weekendDaysCount;
+            }
+        } else if (toolPricing.isWeekdayCharged && toolPricing.isWeekendCharged) {
+            chargeDaysCount += rentalDaysCount;
+        }
+
+        // Exclude any valid holidays
+        if (!toolPricing.isHolidayCharged) {
+            int holidaysCount = 0;
+            // TODO
+            chargeDaysCount -= holidaysCount;
+        }
+
+        return chargeDaysCount;
     }
 }

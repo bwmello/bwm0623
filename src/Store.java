@@ -48,18 +48,31 @@ public class Store {
         // Add any valid weekdays or weekends
         if (toolPricing.isWeekdayCharged != toolPricing.isWeekendCharged) {
             int startingDay = checkoutDate.plusDays(1).get(ChronoField.DAY_OF_WEEK);  // 6 == Saturday, 7 == Sunday
-            int endingDay = dueDate.get(ChronoField.DAY_OF_WEEK);
             int repeatedWeeks = rentalDaysCount / 7;
             int weekendDaysCount = 2 * repeatedWeeks;
-            if (startingDay != endingDay) {
-                // TODO
+            int weekRemainingDays = rentalDaysCount % 7;
+            if (weekRemainingDays > 0) {
+                // Monday to Friday: 1 + 5 - 6 = 0
+                // Monday to Saturday: 1 + 6 - 6 = 1
+                // Saturday to Saturday: 6 + 1 - 6 = 1
+                // Sunday to Sunday: 7 + 1 - 6 = 2
+                // Saturday to Sunday: 6 + 2 - 6 = 2
+                // Thursday to Tuesday: 4 + 6 - 6 = 4
+                int weekendDeterminingCount = startingDay + weekRemainingDays - 6;
+                if (weekendDeterminingCount > 0) {
+                    weekendDaysCount += 1;
+                    if (weekendDeterminingCount > 1 && startingDay != 7) {
+                        weekendDaysCount += 1;
+                    }
+                }
             }
-            int weekDaysCount = rentalDaysCount - weekendDaysCount;
-            if (toolPricing.isWeekdayCharged) {
-                chargeDaysCount += weekDaysCount;
-            }
+
             if (toolPricing.isWeekendCharged) {
                 chargeDaysCount += weekendDaysCount;
+            }
+            if (toolPricing.isWeekdayCharged) {
+                int weekDaysCount = rentalDaysCount - weekendDaysCount;
+                chargeDaysCount += weekDaysCount;
             }
         } else if (toolPricing.isWeekdayCharged && toolPricing.isWeekendCharged) {
             chargeDaysCount += rentalDaysCount;

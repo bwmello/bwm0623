@@ -12,7 +12,7 @@ class StoreTest {
     /** Arg bounds tests */
     @Test
     @DisplayName("Checkout throws exception if arg rentalDaysCount isn't between 1 and 365")
-    void testCheckoutRentalDaysCountBounds() {
+    void checkoutRentalDaysCountBounds() {
         ToolCode toolCode = ToolCode.LADW;
         assertThrows(IllegalArgumentException.class, () -> {
             store.Checkout(toolCode, "2/1/23", -1, 0);
@@ -27,7 +27,7 @@ class StoreTest {
 
     @Test
     @DisplayName("Checkout throws exception if arg discountPercentInt isn't between 0 and 100")
-    void testCheckoutDiscountPercentIntBounds() {
+    void checkoutDiscountPercentIntBounds() {
         ToolCode toolCode = ToolCode.LADW;
         assertThrows(IllegalArgumentException.class, () -> {
             store.Checkout(toolCode, "2/1/23", 7, -1);
@@ -40,7 +40,7 @@ class StoreTest {
     /** Arg parsing tests */
     @Test
     @DisplayName("Checkout parses arg checkoutDateString of format mm/dd/yy to LocalDate")
-    void testCheckoutDateStringParsing() {
+    void checkoutDateStringParsing() {
         int rentalDaysCount = 7;
         LocalDate dueDate = LocalDate.of(2023, 2, 8);
 
@@ -53,7 +53,7 @@ class StoreTest {
 
     @Test
     @DisplayName("Checkout parses arg discountPercentInt to BigDecimal")
-    void testCheckoutDiscountPercentIntParsing() {
+    void checkoutDiscountPercentIntParsing() {
         RentalAgreement rentAgreement = store.Checkout(ToolCode.LADW, "02/01/23", 7, 49);
         assertEquals(new BigDecimal(".49"), rentAgreement.discountPercent);
     }
@@ -61,7 +61,7 @@ class StoreTest {
     /** Baseline calculation tests */
     @Test
     @DisplayName("Checkout charging all rental days with no discount")
-    void testCheckoutAllChargeDaysNoDiscount() {
+    void checkoutAllChargeDaysNoDiscount() {
         BigDecimal dailyCharge = store.toolsPricingMap.get(ToolType.LADDER).dailyCharge;
         assertEquals(new BigDecimal("1.99"), dailyCharge);
         assertTrue(store.toolsPricingMap.get(ToolType.LADDER).isWeekdayCharged);
@@ -79,7 +79,7 @@ class StoreTest {
 
     @Test
     @DisplayName("Checkout charging all rental days with discount")
-    void testCheckoutAllChargeDaysWithDiscount() {
+    void checkoutAllChargeDaysWithDiscount() {
         RentalAgreement rentAgreement = store.Checkout(ToolCode.LADW, "2/1/23", 7, 50);
         assertEquals(new BigDecimal("13.93"), rentAgreement.preDiscountCharge);
         assertEquals(new BigDecimal("6.97"), rentAgreement.discountAmount);

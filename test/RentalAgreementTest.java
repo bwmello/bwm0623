@@ -27,7 +27,7 @@ class RentalAgreementTest {
 
     @Test
     @DisplayName("Print formats numbers and dates as expected")
-    void testPrint() {
+    void print() {
         Tool tool = store.toolsMap.get(ToolCode.LADW);
         int rentalDaysCount = 3;
         int chargeDaysCount = 3;

@@ -48,7 +48,7 @@ public class ToolPricing {
         return chargeDaysCount;
     }
 
-    public int GetWeekendDaysCount(int rentalDaysCount, LocalDate checkoutDate) {
+    static int GetWeekendDaysCount(int rentalDaysCount, LocalDate checkoutDate) {
         int startingDay = checkoutDate.plusDays(1).get(ChronoField.DAY_OF_WEEK);  // 6 == Saturday, 7 == Sunday
         int repeatedWeeks = rentalDaysCount / 7;
         int weekendDaysCount = 2 * repeatedWeeks;

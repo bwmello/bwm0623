@@ -2,7 +2,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
-import java.time.temporal.ChronoField;
 import java.util.HashMap;
 
 public class Store {
@@ -33,58 +32,9 @@ public class Store {
 
         LocalDate checkoutDate = LocalDate.parse(checkoutDateString, DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT));
         LocalDate dueDate = checkoutDate.plusDays(rentalDaysCount);
-        int chargeDaysCount = GetChargeDaysCount(toolPricing, rentalDaysCount, checkoutDate, dueDate);
+        int chargeDaysCount = toolPricing.GetChargeDaysCount(this, rentalDaysCount, checkoutDate, dueDate);
 
         BigDecimal discountPercent = BigDecimal.valueOf(discountPercentInt).divide(new BigDecimal("100"));
         return new RentalAgreement(tool, rentalDaysCount, checkoutDate, dueDate, toolPricing.dailyCharge, chargeDaysCount, discountPercent);
-    }
-
-    public int GetChargeDaysCount(ToolPricing toolPricing, int rentalDaysCount, LocalDate checkoutDate, LocalDate dueDate) {
-        int chargeDaysCount = 0;  // From day after checkoutDate through and including dueDate
-
-        // Linear solution, too slow as rentalDaysCount approaches max limit:
-        // checkoutDate.plusDays(1).datesUntil(dueDate.plusDays(1)).forEach(date -> {});
-
-        // Add any valid weekdays or weekends
-        if (toolPricing.isWeekdayCharged != toolPricing.isWeekendCharged) {
-            int startingDay = checkoutDate.plusDays(1).get(ChronoField.DAY_OF_WEEK);  // 6 == Saturday, 7 == Sunday
-            int repeatedWeeks = rentalDaysCount / 7;
-            int weekendDaysCount = 2 * repeatedWeeks;
-            int weekRemainingDays = rentalDaysCount % 7;
-            if (weekRemainingDays > 0) {
-                // Monday to Friday: 1 + 5 - 6 = 0
-                // Monday to Saturday: 1 + 6 - 6 = 1
-                // Saturday to Saturday: 6 + 1 - 6 = 1
-                // Sunday to Sunday: 7 + 1 - 6 = 2
-                // Saturday to Sunday: 6 + 2 - 6 = 2
-                // Thursday to Tuesday: 4 + 6 - 6 = 4
-                int weekendDeterminingCount = startingDay + weekRemainingDays - 6;
-                if (weekendDeterminingCount > 0) {
-                    weekendDaysCount += 1;
-                    if (weekendDeterminingCount > 1 && startingDay != 7) {
-                        weekendDaysCount += 1;
-                    }
-                }
-            }
-
-            if (toolPricing.isWeekendCharged) {
-                chargeDaysCount += weekendDaysCount;
-            }
-            if (toolPricing.isWeekdayCharged) {
-                int weekDaysCount = rentalDaysCount - weekendDaysCount;
-                chargeDaysCount += weekDaysCount;
-            }
-        } else if (toolPricing.isWeekdayCharged && toolPricing.isWeekendCharged) {
-            chargeDaysCount += rentalDaysCount;
-        }
-
-        // Exclude any valid holidays
-        if (!toolPricing.isHolidayCharged) {
-            int holidaysCount = 0;
-            // TODO
-            chargeDaysCount -= holidaysCount;
-        }
-
-        return chargeDaysCount;
     }
 }

@@ -24,11 +24,14 @@ class HolidayOfDate extends Holiday {
     public LocalDate DateOfYear(int year) {
         LocalDate holidayDate = LocalDate.of(year, monthOfYear, dayOfMonth);
         int dayOfWeek = holidayDate.get(ChronoField.DAY_OF_WEEK);
+
         if (dayOfWeek == 6) {
             return holidayDate.plusDays(-1);  // previous Friday
-        } else if (dayOfWeek > 6) {
+        }
+        else if (dayOfWeek > 6) {
             return holidayDate.plusDays(1); // next Monday
-        } else {
+        }
+        else {
             return holidayDate;
         }
     }

@@ -11,6 +11,7 @@ public class Store {
     HashMap<ToolCode, Tool> toolsMap = new HashMap<>();
     HashMap<ToolType, ToolPricing> toolsPricingMap = new HashMap<>();
     List<Holiday> holidaysList = new ArrayList<>();
+    HashMap<Integer, List<LocalDate>> holidaysByYearMap = new HashMap<>();
 
     public Store() {
         toolsMap.put(ToolCode.CHNS, new Tool(ToolCode.CHNS, ToolType.CHAINSAW, ToolBrand.STIHL));
@@ -27,8 +28,8 @@ public class Store {
     }
 
     public RentalAgreement Checkout(ToolCode toolCode, String checkoutDateString, int rentalDaysCount, int discountPercentInt) {
-        if (rentalDaysCount < 1 || rentalDaysCount > 365) {
-            throw new IllegalArgumentException("Rental days count must be between 1 and 365");
+        if (rentalDaysCount < 1 || rentalDaysCount > 3650) {  // rentalDays between 1 day and 10 years
+            throw new IllegalArgumentException("Rental days count must be between 1 and 3650");
         }
         if (discountPercentInt < 0 || discountPercentInt > 100) {
             throw new IllegalArgumentException("Discount percent must be between 0 and 100");
@@ -43,5 +44,20 @@ public class Store {
 
         BigDecimal discountPercent = BigDecimal.valueOf(discountPercentInt).divide(new BigDecimal("100"));
         return new RentalAgreement(tool, rentalDaysCount, checkoutDate, dueDate, toolPricing.dailyCharge, chargeDaysCount, discountPercent);
+    }
+
+    public List<LocalDate> GetHolidaysForYear(int year) {
+        if (holidaysByYearMap.containsKey(year)) {
+            return holidaysByYearMap.get(year);
+        }
+        else {
+            List<LocalDate> holidaysForYear = new ArrayList<>();
+            for(Holiday holiday : holidaysList) {
+                holidaysForYear.add(holiday.DateOfYear(year));
+            }
+
+            holidaysByYearMap.put(year, holidaysForYear);
+            return holidaysForYear;
+        }
     }
 }

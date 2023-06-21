@@ -1,6 +1,8 @@
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.temporal.ChronoField;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ToolPricing {
     ToolType toolType;
@@ -34,15 +36,27 @@ public class ToolPricing {
                 int weekDaysCount = rentalDaysCount - weekendDaysCount;
                 chargeDaysCount += weekDaysCount;
             }
-        } else if (isWeekdayCharged && isWeekendCharged) {
+        }
+        else if (isWeekdayCharged && isWeekendCharged) {
             chargeDaysCount += rentalDaysCount;
         }
 
         // Exclude any valid holidays
         if (!isHolidayCharged) {
-            int holidaysCount = 0;  // Holidays that would otherwise be charged (not already weekday/weekend excluded)
-            // TODO
-            chargeDaysCount -= holidaysCount;
+            List<LocalDate> holidays = new ArrayList<>();
+            for (int i = checkoutDate.getYear(); i <= dueDate.getYear(); i++) {
+                holidays.addAll(store.GetHolidaysForYear(i));
+            }
+
+            LocalDate endDateBound = dueDate.plusDays(1);  // Needed because LocalDate.isBefore isn't inclusive
+            for(LocalDate holiday : holidays) {
+                if (holiday.isAfter(checkoutDate) && holiday.isBefore(endDateBound)) {
+                    boolean isHolidayWeekday = holiday.get(ChronoField.DAY_OF_WEEK) < 6;
+                    if ((isHolidayWeekday && isWeekdayCharged) || (!isHolidayWeekday && isWeekendCharged)) {
+                        chargeDaysCount -= 1;
+                    }
+                }
+            };
         }
 
         return chargeDaysCount;

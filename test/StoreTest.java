@@ -9,9 +9,26 @@ import java.time.LocalDate;
 class StoreTest {
     private final Store store = new Store();
 
+    @Test
+    @DisplayName("GetHolidaysForYear assigns returned holiday lists to holidaysByYearMap ")
+    void getHolidaysForYear() {
+        assertEquals(0, store.holidaysByYearMap.size());
+        store.GetHolidaysForYear(2023);
+        assertEquals(1, store.holidaysByYearMap.size());
+        assertEquals(2, store.holidaysByYearMap.get(2023).size());
+
+        store.GetHolidaysForYear(2023);
+        assertEquals(1, store.holidaysByYearMap.size());
+        assertEquals(2, store.holidaysByYearMap.get(2023).size());
+
+        store.GetHolidaysForYear(2015);
+        assertEquals(2, store.holidaysByYearMap.size());
+        assertEquals(2, store.holidaysByYearMap.get(2015).size());
+    }
+
     /** Arg bounds tests */
     @Test
-    @DisplayName("Checkout throws exception if arg rentalDaysCount isn't between 1 and 365")
+    @DisplayName("Checkout throws exception if arg rentalDaysCount isn't between 1 and 3650")
     void checkoutRentalDaysCountBounds() {
         ToolCode toolCode = ToolCode.LADW;
         assertThrows(IllegalArgumentException.class, () -> {
@@ -21,7 +38,7 @@ class StoreTest {
             store.Checkout(toolCode, "2/1/23", 0, 0);
         });
         assertThrows(IllegalArgumentException.class, () -> {
-            store.Checkout(toolCode, "2/1/23", 366, 0);
+            store.Checkout(toolCode, "2/1/23", 3660, 0);
         });
     }
 

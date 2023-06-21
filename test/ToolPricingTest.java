@@ -1,6 +1,7 @@
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -45,7 +46,18 @@ class ToolPricingTest {
     }
 
     @Test
-    void getChargeDaysCount() {
-        // TODO
+    @DisplayName("GetChargeDaysCount while charging all days except weekends")
+    void getChargeDaysCountExcludingWeekends() {
+        ToolPricing toolPricing = new ToolPricing(ToolType.CHAINSAW, new BigDecimal("1.49"), true, false, true);
+        int chargeDaysCount = toolPricing.GetChargeDaysCount(store, 60, LocalDate.of(2023, 7, 1), LocalDate.of(2023, 8, 30));
+        assertEquals(43, chargeDaysCount);
+    }
+
+    @Test
+    @DisplayName("GetChargeDaysCount while charging all days except holidays")
+    void getChargeDaysCountExcludingHolidays() {
+        ToolPricing toolPricing = new ToolPricing(ToolType.CHAINSAW, new BigDecimal("1.49"), true, true, false);
+        int chargeDaysCount = toolPricing.GetChargeDaysCount(store, 60, LocalDate.of(2023, 7, 1), LocalDate.of(2023, 8, 30));
+        assertEquals(59, chargeDaysCount);
     }
 }

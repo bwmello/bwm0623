@@ -103,6 +103,57 @@ class StoreTest {
         assertEquals(new BigDecimal("6.96"), rentAgreement.finalCharge);
     }
 
-    /** Required calculation tests */
-    // TODO
+    /** Required tests */
+    @Test
+    @DisplayName("Checkout Test 1")
+    void checkoutTest1() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            store.Checkout(ToolCode.JAKR, "9/3/15", 5, 101);
+        });
+    }
+
+    @Test
+    @DisplayName("Checkout Test 2")
+    void checkoutTest2() {
+        RentalAgreement rentAgreement = store.Checkout(ToolCode.LADW, "7/2/20", 3, 10);
+        assertEquals(new BigDecimal("3.98"), rentAgreement.preDiscountCharge);  // 2 * 1.99
+        assertEquals(new BigDecimal("0.40"), rentAgreement.discountAmount);
+        assertEquals(new BigDecimal("3.58"), rentAgreement.finalCharge);
+    }
+
+    @Test
+    @DisplayName("Checkout Test 3")
+    void checkoutTest3() {
+        RentalAgreement rentAgreement = store.Checkout(ToolCode.CHNS, "7/2/15", 5, 25);
+        assertEquals(new BigDecimal("4.47"), rentAgreement.preDiscountCharge);  // 3 * 1.49
+        assertEquals(new BigDecimal("1.12"), rentAgreement.discountAmount);
+        assertEquals(new BigDecimal("3.35"), rentAgreement.finalCharge);
+    }
+
+    @Test
+    @DisplayName("Checkout Test 4")
+    void checkoutTest4() {
+        RentalAgreement rentAgreement = store.Checkout(ToolCode.JAKD, "9/3/15", 6, 0);
+        assertEquals(new BigDecimal("8.97"), rentAgreement.preDiscountCharge);  // 3 * 2.99
+        assertEquals(new BigDecimal("0.00"), rentAgreement.discountAmount);
+        assertEquals(new BigDecimal("8.97"), rentAgreement.finalCharge);
+    }
+
+    @Test
+    @DisplayName("Checkout Test 5")
+    void checkoutTest5() {
+        RentalAgreement rentAgreement = store.Checkout(ToolCode.JAKR, "7/2/15", 9, 0);
+        assertEquals(new BigDecimal("14.95"), rentAgreement.preDiscountCharge);  // 5 * 2.99
+        assertEquals(new BigDecimal("0.00"), rentAgreement.discountAmount);
+        assertEquals(new BigDecimal("14.95"), rentAgreement.finalCharge);
+    }
+
+    @Test
+    @DisplayName("Checkout Test 6")
+    void checkoutTest6() {
+        RentalAgreement rentAgreement = store.Checkout(ToolCode.JAKR, "7/2/20", 4, 50);
+        assertEquals(new BigDecimal("2.99"), rentAgreement.preDiscountCharge);  // 1 * 2.99
+        assertEquals(new BigDecimal("1.50"), rentAgreement.discountAmount);
+        assertEquals(new BigDecimal("1.49"), rentAgreement.finalCharge);
+    }
 }

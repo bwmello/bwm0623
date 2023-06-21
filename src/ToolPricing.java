@@ -59,6 +59,10 @@ public class ToolPricing {
             };
         }
 
+        // Suggestion to prevent completely free tool rentals:
+//        if (chargeDaysCount < 1) {
+//            return 1;
+//        }
         return chargeDaysCount;
     }
 
